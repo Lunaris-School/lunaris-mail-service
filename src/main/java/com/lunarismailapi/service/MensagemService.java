@@ -20,22 +20,23 @@ public class MensagemService {
         this.mailSender = mailSender;
     }
     public void enviarEmail(Mensagem mensagem) throws MessagingException, IOException {
-
         ClassPathResource resource = new ClassPathResource("templates/emailTemplate.html");
+        String html;
         try (InputStream inputStream = resource.getInputStream()) {
-            String html = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-
-            html = html.replace("${nomeAluno}", mensagem.getNomeAluno());
-            html = html.replace("${conteudo}", mensagem.getConteudo());
-
-            MimeMessage email = mailSender.createMimeMessage();
-            MimeMessageHelper mensagemHp = new MimeMessageHelper(email, "UTF-8");
-
-            mensagemHp.setTo(mensagem.getEmailProfessor());
-            mensagemHp.setSubject(mensagem.getAssunto() + " - " + mensagem.getNomeAluno());
-            mensagemHp.setText(html, true);
-
-            mailSender.send(email);
+            html = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         }
+
+        html = html.replace("${nomeAluno}", mensagem.getNomeAluno());
+        html = html.replace("${conteudo}", mensagem.getConteudo());
+
+        MimeMessage email = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(email, true, "UTF-8");
+
+        helper.setFrom("api@seudominio.com");
+        helper.setTo(mensagem.getEmailProfessor());
+        helper.setSubject(mensagem.getAssunto() + " - " + mensagem.getNomeAluno());
+        helper.setText(html, true);
+
+        mailSender.send(email);
     }
 }
