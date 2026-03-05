@@ -22,7 +22,7 @@ public class MensagemController {
             mensagemService.enviarEmail(mensagem);
             return ResponseEntity.ok().body("Email enviado com sucesso!");
         }catch (MessagingException | IOException ex){
-            return ResponseEntity.internalServerError().body("Erro ao enviar email.");
+            return ResponseEntity.internalServerError().body("Erro ao enviar email: "+ex.getMessage());
         }
     }
 }
